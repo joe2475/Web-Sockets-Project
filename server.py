@@ -12,4 +12,4 @@ while True:
     clientSocket, address = s.accept()
 
     #Sends data to the client socket with a utf-8 encoding
-    clientSocket.send(bytes("Test Message", "utf-8")
+    clientSocket.send(bytes("Test Message"))
