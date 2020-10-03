@@ -10,11 +10,10 @@ s.bind((host, 1234))
 s.listen(5)
 #print(socket.gethostname())
 
-
-
-
 while True:
     print("WEB PROXY SERVER IS LISTENING")
     clientSocket, address = s.accept()
-    #Used to terminate the program after running the client request. Used for testing for now. 
-    signal.SIGKILL
+    data = clientSocket.recv(10000)
+    print(data)
+    #clientSocket.close()
+    #s.close()
