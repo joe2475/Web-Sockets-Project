@@ -1,4 +1,6 @@
 import socket 
+import socketserver
+
 host = 'localhost'
 #AF_INET is what corrosponds with IPV4 and SOCK_STREAM is for TCP
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -8,9 +10,11 @@ s.bind((host, 1234))
 s.listen(5)
 #print(socket.gethostname())
 
+
+
+
 while True:
     print("WEB PROXY SERVER IS LISTENING")
     clientSocket, address = s.accept()
-
-    #Sends data to the client socket with a utf-8 encoding
-    clientSocket.send(bytes("Test Message"))
+    #Used to terminate the program after running the client request. Used for testing for now. 
+    signal.SIGKILL
