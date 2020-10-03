@@ -17,18 +17,9 @@ while True:
     #print(data)
     print("MESSAGE RECEIVED FROM CLIENT:")
     data = data.decode('utf-8')
-    GET = data.split('\n')[0]
-    hostName = data.split('\n')[1]
-    connection = data.split('\n')[2]
-    upgrade = data.split('\n')[4]
-    user_agent = data.split('\n')[5]
-    accept = data.split('\n')[6]
-    print(GET)
-    print(hostName)
-    print(connection)
-    print(upgrade)
-    print(user_agent)
-    print(accept)
+    data = data.split('\n')
+    for x in range(len(data)):
+        print(data[x])
     print("END OF MESSAGE RECEIVED FROM CLIENT")
     
     exit()
