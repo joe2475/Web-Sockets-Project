@@ -16,11 +16,18 @@ while True:
     data = clientSocket.recv(10000)
     #print(data)
     print("MESSAGE RECEIVED FROM CLIENT:")
+    #Parses and decodes the incoming http request 
     data = data.decode('utf-8')
+    getRequest = data.split('\n')[0]
+    method = getRequest.split(' ')[0]
+    destAddr = (getRequest.split(' ')[1])[1:]
+    version = getRequest.split(' ')[2]
     data = data.split('\n')
     for x in range(len(data)):
         print(data[x])
     print("END OF MESSAGE RECEIVED FROM CLIENT")
+    print("[PARSE MESSAGE HEADER]")
+    print(f'METHOD = {method}, DESTADDRESS = {destAddr}, HTTPVersion = {version}')
     
     exit()
    # clientSocket.close()
