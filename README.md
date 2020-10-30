@@ -1,4 +1,4 @@
-# Web-Sockets-Project
+# Web-Proxy-Project
 Project for Computer Networks class. 
 
 
