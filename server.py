@@ -1,8 +1,18 @@
 import socket 
 import socketserver
 
+#####################
+# Cache is a list of lists
+# The first element of the inner list is the URL and the second is the data
+#####################
+cache = []
+def cacheObject(destAddr, data): # - No.7 MS
+    # v parsed before (or in the function - change params)
+    temp = [destAddr, data]
+    cache.append(temp)
+
 host = 'localhost'
-#AF_INET is what corrosponds with IPV4 and SOCK_STREAM is for TCP
+#AF_INET is what corresponds with IPV4 and SOCK_STREAM is for TCP
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Host name will be localhost and 1234 is the port number. Port will change just used it for testing purposes. 
 s.bind((host, 50000))
@@ -29,6 +39,21 @@ while True:
     print("[PARSE MESSAGE HEADER]")
     print(f'METHOD = {method}, DESTADDRESS = {destAddr}, HTTPVersion = {version}')
     
+    # Check if destAddr is cashed ... - No.5 MS 
+    addrCached = False
+    for index in range(len(cache)): 
+        if cache[index][0]:
+            # The address is cashed!
+            # TODO: Return info to client (No. 4?)
+            addrCached = True
+            break
+    if addrCached == False: # Not in GET - No. 6
+        # Not Cashed
+        break # TODO: Request webpage from webserver, receive webdata, parse and add to cache. Also remove break
+        # Then send data to client. This is a big part
+
     exit()
-   # clientSocket.close()
- #   s.close()
+    # clientSocket.close()
+
+
+#   s.close()
