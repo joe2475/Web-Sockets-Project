@@ -4,15 +4,8 @@ import ssl
 import os
 
 ###############################
-# Cache is a list of lists
-# The first element of the inner list is the URL and the second is the data
-# TODO: Remove
-###############################
+# Cache is a list 
 cache = []
-def cacheObject(destAddr, data): # - No.7 MS
-    # v parsed before (or in the function - change params)
-    temp = [destAddr, data]
-    cache.append(temp)
 ##############################################################
 
 ###############################
@@ -36,7 +29,7 @@ s.listen(5)
 # TODO: GET images and ect.
 # TODO: Possibly handle other requests other than GET
 ###############################
-def getWebpage(hostName): #hostName is the address of the server
+def addToCache(hostName): #hostName is the address of the server
     # Creates SSL context with recommended security settings. Includes cert. verification
     context = ssl.create_default_context()
 
@@ -67,7 +60,6 @@ def getWebpage(hostName): #hostName is the address of the server
         
     except:
         conn.close()
-        print('hi')
         f.close()
 
     # This gets rid of the header
@@ -76,9 +68,10 @@ def getWebpage(hostName): #hostName is the address of the server
             os.remove(hostname+".html")
         f = open(hostname+".webdoc",'r')
         f2 = open(hostname+".html",'a')
+        cache.push(hostname) # adding to the cache
         webline = f.readline()
         while webline:
-            if webline.upper().find('<!DOCTYPE HTML>')>-1:
+            if webline.upper().find('<!DOCTYPE HTML>')>-1: # TODO: add more HTML start tags
                 break
             webline = f.readline()
         print (webline)
@@ -124,14 +117,15 @@ while True:
         if cache[index][0]:
             # The address is cashed!
             # TODO: Return info to client (No. 4?)
+            # It will be stored in CD
             addrCached = True
             break
     if addrCached == False: # Not in GET - No. 6
         # Not Cashed
-        break # TODO: Request webpage from webserver, receive webdata, parse and add to cache. Also remove break
+        addToCache(destAddr) # This GETs and adds into cache
         # Then send data to client. This is a big part
 
-    getWebpage(destAddr)
+    
     exit()
 ##############################################################
     # clientSocket.close()
