@@ -3,6 +3,21 @@ import socketserver
 import ssl
 import os
 
+'''
+8.1.3 Proxy Servers
+
+   It is especially important that proxies correctly implement the
+   properties of the Connection header field as specified in 14.2.1.
+
+   The proxy server MUST signal persistent connections separately with
+   its clients and the origin servers (or other proxy servers) that it
+   connects to. Each persistent connection applies to only one transport
+   link.
+
+   A proxy server MUST NOT establish a persistent connection with an
+   HTTP/1.0 client.
+'''
+
 ###############################
 # Cache is a list 
 cache = []
@@ -29,12 +44,12 @@ s.listen(5)
 # TODO: GET images and ect.
 # TODO: Possibly handle other requests other than GET
 ###############################
-def addToCache(hostName): #hostName is the address of the server
+def addToCache(hostname): #hostName is the address of the server
     # Creates SSL context with recommended security settings. Includes cert. verification
     context = ssl.create_default_context()
 
     # Connect to a server
-    hostname='www.google.com'
+    #hostname='www.google.com'
     conn = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=hostname)
     conn.connect((hostname, 443))
 
@@ -47,11 +62,11 @@ def addToCache(hostName): #hostName is the address of the server
         if os.path.exists(hostname+".webdoc"):
             os.remove(hostname+".webdoc")
         f = open(hostname+".webdoc",'a')
-        conn.settimeout(1)#idk 100 seemed like a good number
+        conn.settimeout(5)#idk 100 seemed like a good number
         while True:
             data = conn.recv(1000)#.split(b"\r\n")
             if data:
-                print(data) 
+                #print(data) 
                 f.write(data.decode('utf-8'))
             else:
                 break
@@ -68,19 +83,25 @@ def addToCache(hostName): #hostName is the address of the server
             os.remove(hostname+".html")
         f = open(hostname+".webdoc",'r')
         f2 = open(hostname+".html",'a')
-        cache.push(hostname) # adding to the cache
+        cache.append(hostname) # adding to the cache
         webline = f.readline()
         while webline:
             if webline.upper().find('<!DOCTYPE HTML>')>-1: # TODO: add more HTML start tags
+                #print("HTML")
                 break
             webline = f.readline()
-        print (webline)
+        #print (webline)
+        htmlFlag=True
         while webline:
+            if htmlFlag == True:
+                if webline.upper().find('<\HTML>')>-1: 
+                    htmlFlag=False
+                #if TODO add getting images and ect? Recursion?? AAK
             f2.write(webline)
             webline = f.readline() 
         f.close()
         f2.close()
-        os.remove(hostname+".webdoc")
+        #os.remove(hostname+".webdoc")
     except:
         print('file error')
         f.close()
