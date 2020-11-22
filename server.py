@@ -25,11 +25,6 @@ while True:
     destAddr = (getRequest.split(' ')[1])[1:]
     version = getRequest.split(' ')[2]
     data = data.split('\n')
-    upinsecure = data[4]
-    userAgent = data[5]
-    accept = data[6]
-    aceceptInc = data[11]
-    acceptLang = data[12]
     for x in range(len(data)):
         print(data[x])
     print("END OF MESSAGE RECEIVED FROM CLIENT")
@@ -37,13 +32,10 @@ while True:
     print(f'METHOD = {method}, DESTADDRESS = {destAddr}, HTTPVersion = {version}')
     print("Dest:" + destAddr)
     print("REQUEST MESSAGE SENT TO ORIGINAL SERVER:")
+    print('GET / HTTP/1.1')
     print('Host ' + destAddr)
-    print('Connection: close')
-    print(upinsecure)
-    print(userAgent)
-    print(accept)
-    print(aceceptInc)
-    print(acceptLang)
+    for x in range(len(data)-2):
+        print(data[x+2])
     
     dest = 'Host: ' + destAddr + ':80\r\n'
     server_address = (destAddr, 80)
@@ -57,7 +49,6 @@ while True:
     s2 = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=destAddr)
     s2.connect((destAddr, 443))
     s2.sendall(message)
-
     #Parses response header
     respdata = b''
     while True: 
