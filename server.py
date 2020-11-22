@@ -25,7 +25,11 @@ while True:
     destAddr = (getRequest.split(' ')[1])[1:]
     version = getRequest.split(' ')[2]
     data = data.split('\n')
-    message2 = ''
+    upinsecure = data[4]
+    userAgent = data[5]
+    accept = data[6]
+    aceceptInc = data[11]
+    acceptLang = data[12]
     for x in range(len(data)):
         print(data[x])
     print("END OF MESSAGE RECEIVED FROM CLIENT")
@@ -33,6 +37,13 @@ while True:
     print(f'METHOD = {method}, DESTADDRESS = {destAddr}, HTTPVersion = {version}')
     print("Dest:" + destAddr)
     print("REQUEST MESSAGE SENT TO ORIGINAL SERVER:")
+    print('Host ' + destAddr)
+    print('Connection: close')
+    print(upinsecure)
+    print(userAgent)
+    print(accept)
+    print(aceceptInc)
+    print(acceptLang)
     dest = 'Host: ' + destAddr + ':80\r\n'
     server_address = (destAddr, 80)
     destination = ('Host: ' + destAddr + ':80\r\n')
