@@ -11,7 +11,7 @@ s.bind((host, 50000))
 #Que of 5 listens in case traffic becomes full
 s.listen(5)
 #Second socket that is used to connect to the web server. 
-s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+context = ssl.create_default_context()
 while True:
     print("WEB PROXY SERVER IS LISTENING")
     clientSocket, address = s.accept()
@@ -44,6 +44,7 @@ while True:
     print(accept)
     print(aceceptInc)
     print(acceptLang)
+    
     dest = 'Host: ' + destAddr + ':80\r\n'
     server_address = (destAddr, 80)
     destination = ('Host: ' + destAddr + ':80\r\n')
@@ -53,8 +54,10 @@ while True:
     message += b'\r\n'
     print("END OF MESSAGE SENT TO ORIGINAL SERVER")
     #Uses a second socket to connect to the destination server
-    s2.connect(server_address)
+    s2 = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=destAddr)
+    s2.connect((destAddr, 443))
     s2.sendall(message)
+
     #Parses response header
     respdata = b''
     while True: 
