@@ -4,12 +4,13 @@ import urllib.request
 import ssl
 host = 'localhost'
 #AF_INET is what corrosponds with IPV4 and SOCK_STREAM is for TCP
+#This socket will be used for connection between the client and the proxy
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #Host name will be localhost and 1234 is the port number. Port will change just used it for testing purposes. 
 s.bind((host, 50000))
 #Que of 5 listens in case traffic becomes full
 s.listen(5)
-#print(socket.gethostname())
+#Second socket that is used to connect to the web server. 
 s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 while True:
