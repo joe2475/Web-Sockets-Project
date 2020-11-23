@@ -96,39 +96,41 @@ while True:
             break
     #########################
     if addrCached == False: # Not Cashed
-        #########################
-        # Connecting to external server
-        # Uses socketwrapper to connect to the destination server
-        s2 = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=destAddr)
-        s2.connect((destAddr, 443))
-        s2.sendall(message)
-        
-        # Parses response header
-        respdata = b''
-        while True: 
-            buf = s2.recv(1024)
-            if not buf:
-                break
-            respdata += buf
-        response = respdata.decode('utf-8', 'ignore')
-        # Prints the response
-        print("RESPONSE HEADER FROM ORIGINAL SERVER")
-        #Range is 10 as to not print the html data
-        for x in range(10):
-            print(response.split('\n')[x])
-        print("END OF HEADER")
-        # Adding to cache        
-        if os.path.exists(destAddr+".webdoc"):
-            os.remove(destAddr+".webdoc")
-        f = open(destAddr+".webdoc",'a')
-        f.write(response)
-        f.close()
-        cache.append(destAddr) # Adds the cached list
+        try: # python sockets is broken, and this is how I kinda fixed it. kinda
+            #########################
+            # Connecting to external server
+            # Uses socketwrapper to connect to the destination server
+            s2 = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=destAddr)
+            s2.connect((destAddr, 443))
+            s2.sendall(message)
+            
+            # Parses response header
+            respdata = b''
+            while True: 
+                buf = s2.recv(1024)
+                if not buf:
+                    break
+                respdata += buf
+            response = respdata.decode('utf-8', 'ignore')
+            # Prints the response
+            print("RESPONSE HEADER FROM ORIGINAL SERVER")
+            #Range is 10 as to not print the html data
+            for x in range(10):
+                print(response.split('\n')[x])
+            print("END OF HEADER")
+            # Adding to cache        
+            if os.path.exists(destAddr+".webdoc"):
+                os.remove(destAddr+".webdoc")
+            f = open(destAddr+".webdoc",'a')
+            f.write(response)
+            f.close()
+            cache.append(destAddr) # Adds the cached list
 
-        # Close connection to webserver
-        s2.close()
-        # Send webpage to client
-        clientSocket.sendall(respdata)
-        clientSocket.close()
-        
+            # Close connection to webserver
+            # s2.close()
+            # Send webpage to client
+            clientSocket.sendall(respdata)
+            clientSocket.close()
+        except:
+            pass
 #s.close()
