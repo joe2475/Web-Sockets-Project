@@ -56,13 +56,23 @@ while True:
 
     # Check if destAddr is cashed ... - No.5 MS 
     addrCached = False
-    for index in range(len(cache)): 
-        if cache[index][0]:
+    for index in range(len(cache)): # Err what?? TODO
+        if (cache[index]).lower()==destAddr.lower():
             # The address is cashed!
             # TODO: Return info to client (No. 4?)
             # It will be stored in CD
+            print("cashed")
             addrCached = True
+            try: # writes entire responce to file
+                f = open(destAddr+".webdoc",'r')
+                cachedPage=f.read().encode(encoding='utf_8')
+                clientSocket.sendall(cachedPage)
+                f.close()
+            except:
+                f.close()
+                print("Error sending cashed page")
             break
+    
     if addrCached == False: # Not Cashed
         # Connecting to external server
         #Uses a second socket to connect to the destination server
@@ -83,68 +93,18 @@ while True:
         for x in range(10):
             print(response.split('\n')[x])
         print("END OF HEADER")
-        '''
-        try: # Add to cache
-            if os.path.exists(destAddr+".html"): # removes file is it exists
-                os.remove(destAddr+".html")
-            f = open(destAddr+".html",'w')
-            cache.append(destAddr) # adding to the cache data structure
-            print(respdata)
-            f.write(respdata.decode('utf-8'))
-            f.close()
-        except:
-            print('file error')
-            f.close()
-
-        '''
-        '''
-        print(response)
-        if os.path.exists(destAddr+".html"): # removes file is it exists
-            os.remove(destAddr+".html")
-        f = open(destAddr+".html",'w')
-        cache.append(destAddr) # adding to the cache data structure
-        f.write(response) #.decode('windows-1252'))
-        f.close()
-        '''
-        try: # writes webpage to file
+        # Adding to cache        
+        try: # writes entire responce to file
             if os.path.exists(destAddr+".webdoc"):
                 os.remove(destAddr+".webdoc")
             f = open(destAddr+".webdoc",'a')
             f.write(response)
             f.close()
-        
+            cache.append(destAddr) # Adds the cached list
         except:
             f.close()
+            print("Error writing responce to file. Webpage not cached")
 
-        # This gets rid of the header
-        try:
-            if os.path.exists(destAddr+".html"):
-                os.remove(destAddr+".html")
-            f = open(destAddr+".webdoc",'r')
-            f2 = open(destAddr+".html",'a')
-            cache.append(destAddr) # adding to the cache
-            webline = f.readline()
-            while webline:
-                if webline.upper().find('<!DOCTYPE HTML>')>-1: # TODO: add more HTML start tags
-                    #print("HTML")
-                    break
-                webline = f.readline()
-            #print (webline)
-            htmlFlag=True
-            while webline:
-                if htmlFlag == True:
-                    if webline.upper().find('<\HTML>')>-1: 
-                        htmlFlag=False
-                    #if TODO add getting images and ect? Recursion?? AAK
-                f2.write(webline)
-                webline = f.readline() 
-            f.close()
-            f2.close()
-            #os.remove(hostname+".webdoc")
-        except:
-            print('file error')
-            f.close()
-            f2.close()
 
         # print(temp)
         s2.close()
@@ -152,5 +112,6 @@ while True:
         clientSocket.close()
         #exit()
         #s.close()
-        break
+        #break
+print(cache)
 s.close()
