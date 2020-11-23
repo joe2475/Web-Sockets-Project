@@ -82,9 +82,13 @@ while True:
     # Check if destAddr is cashed ... - No.5 MS 
     addrCached = False
     for index in range(len(cache)): 
+        print(cache[index].lower())
+        print(destAddr.lower())
         if (cache[index]).lower()==destAddr.lower(): # The address is cashed!
+            print('cashed')
             addrCached = True
             try: # Take cashed page and send to client
+                print("SENDING CASHED PAGE")
                 f = open(destAddr+".webdoc",'r')
                 cachedPage=f.read().encode(encoding='utf_8')
                 clientSocket.sendall(cachedPage)
@@ -96,6 +100,7 @@ while True:
             break
     #########################
     if addrCached == False: # Not Cashed
+        print('not cashed')
         try: # python sockets is broken, and this is how I kinda fixed it. kinda
             #########################
             # Connecting to external server
