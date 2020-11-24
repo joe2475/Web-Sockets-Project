@@ -106,6 +106,10 @@ while True:
             break
     #########################
     if addrCached == False: # Not Cashed
+        print("[LOOK UP IN THE CACHE]: NOT FOUND, BUILD REQUEST TO SEND TO ORIGINAL SERVER")
+        print(f"[PARSE REQUEST HEADER] HOSTNAME IS {hostname}")
+        print(f'[PARSE REQUEST HEADER] URL IS {path}')
+        print(f'[PARSE REQUEST HEADER] FILENAME IS {fileName}')
         try:
             print("MADE IT TO CONNECT")
             s3.connect((hostname, 80))
@@ -122,7 +126,7 @@ while True:
             # Prints the response
             print("RESPONSE HEADER FROM ORIGINAL SERVER")
             #Range is 10 as to not print the html data
-            for x in range(4):
+            for x in range(6):
                 print(response.split('\n')[x])
             print("END OF HEADER\n")
             # Adding to cache        
@@ -139,7 +143,6 @@ while True:
             print("END HEADER \n")    
             print(f'[WRITE FILE INTO CACHE]:  {fileName}')            
             # Close connection to webserver
-            # s2.close()
             # Send webpage to client
             clientSocket.close()
         except:
