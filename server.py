@@ -29,8 +29,6 @@ s3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((host, portNumber)) #portNumber default is 50000
 #Que of 5 listens in case traffic becomes full
 s.listen(5)
-# Second Socket
-context = ssl.create_default_context() # Socket that is used to connect to the web server. 
 #########################
 
 
@@ -57,13 +55,32 @@ while True:
     version = getRequest.split(' ')[2]
     urlLen = len(url)
     fileName = url[urlLen-1]
+    print('FILENAME: ' + fileName)
     data = data.split('\n')
     for x in range(len(data)): # This prints the header
         print(data[x])
     print("END OF MESSAGE RECEIVED FROM CLIENT")
     print("[PARSE MESSAGE HEADER]")
     print(f'METHOD = {method}, DESTADDRESS = {destAddr}, HTTPVersion = {version}')
-    print("Dest:" + destAddr)
+     #########################
+    # Check if destAddr is cashed ... - No.5 MS 
+    addrCached = False
+    if os.path.isfile(fileName+".html") : 
+        print(f'[LOOK UP THE CACHE]: FOUND IN THE CACHE: FILE = {fileName}')
+        addrCached = True
+        try: # Take cashed page and send to client
+            f = open(fileName+".html",'rb')
+            cachedPage=f.read()
+            clientSocket.sendall(cachedPage)
+            f.close()
+            print('RESPONSE FROM HEADER FROM PROXY TO CLIENT:')
+            print('HTTP/1.1 200 OK')
+            print('Content-Type: text/html;')
+            print('END HEADER')
+        except:
+            f.close()
+            print("Error sending cashed page")
+        continue
     print("REQUEST MESSAGE SENT TO ORIGINAL SERVER:")
     print('GET / HTTP/1.1')
     print('Host ' + destAddr)
@@ -74,7 +91,7 @@ while True:
     server_address = (destAddr, 80)
     getMesg = 'GET /' + path + ' HTTP/1.1\r\n'
     destination = ('Host: ' + hostname+ ':80\r\n')
-    message  =  bytes(getMesg, encoding='utf-8')    #b'GET /wireshark-labs/HTTP-wireshark-file4.html HTTP/1.1\r\n'
+    message  =  bytes(getMesg, encoding='utf-8')    
     message += bytes(dest, encoding='utf-8')
     message += b'Connection: close\r\n'
     message += b'\r\n'
@@ -82,29 +99,8 @@ while True:
     # End of request parsing from client
     ####################
 
-    # TODO Probably remove this. 'stop' will stop server
-    if destAddr=='stop':
-        print('STOPPING SERVER')
-        s.close()
-        break
-
-    #########################
-    # Check if destAddr is cashed ... - No.5 MS 
-    addrCached = False
-    for index in range(len(cache)): 
-        if (cache[index]).lower()==fileName.lower(): # The address is cashed!
-            print(f'[LOOK UP THE CACHE]: FOUND IN THE CACHE: FILE = {path}')
-            addrCached = True
-            try: # Take cashed page and send to client
-                f = open(path+".html",'r')
-                cachedPage=f.read().encode(encoding='utf_8')
-                clientSocket.sendall(cachedPage)
-                f.close()
-            except:
-                f.close()
-                print("Error sending cashed page")
-                #addrCached = False # Cashing didn't work. Just re-connect TODO 
-            break
+   
+                
     #########################
     if addrCached == False: # Not Cashed
         print("[LOOK UP IN THE CACHE]: NOT FOUND, BUILD REQUEST TO SEND TO ORIGINAL SERVER")
@@ -112,7 +108,6 @@ while True:
         print(f'[PARSE REQUEST HEADER] URL IS {path}')
         print(f'[PARSE REQUEST HEADER] FILENAME IS {fileName}')
         try:
-            print("MADE IT TO CONNECT")
             s3.connect((hostname, 80))
             s3.sendall(message)
             # Parses response header
@@ -133,7 +128,6 @@ while True:
             # Adding to cache        
             if os.path.exists(path[1:] +".html"):
                 os.remove(path +".html")
-            print("MADE IT TO F OPEN")
             f = open(fileName + ".html",'a')
             f.write(response)
             f.close()
@@ -141,12 +135,12 @@ while True:
             print("RESPONSE HEADER FROM PROXY TO CLIENT:")
             for x in range(10):
                 print(response.split('\n')[x])
-            print("END HEADER \n")    
+            print("END HEADER \n") 
             print(f'[WRITE FILE INTO CACHE]:  {fileName}')            
             # Close connection to webserver
             # Send webpage to client
             clientSocket.close()
         except:
             pass
-        break
-#s.close()
+
+s.close()
