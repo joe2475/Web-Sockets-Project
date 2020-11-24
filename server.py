@@ -50,10 +50,13 @@ while True:
     method = getRequest.split(' ')[0]
     destAddr = (getRequest.split(' ')[1])[1:]
     version = getRequest.split(' ')[2]
+    url = destAddr.split('/')
     hostname = destAddr.split('/')[0]
     hostLen = len(hostname)
     path = destAddr[hostLen:]
     version = getRequest.split(' ')[2]
+    urlLen = len(url)
+    fileName = url[urlLen-1]
     data = data.split('\n')
     for x in range(len(data)): # This prints the header
         print(data[x])
@@ -89,10 +92,10 @@ while True:
     # Check if destAddr is cashed ... - No.5 MS 
     addrCached = False
     for index in range(len(cache)): 
-        if (cache[index]).lower()==destAddr.lower(): # The address is cashed!
+        if (cache[index]).lower()==path.lower(): # The address is cashed!
             addrCached = True
             try: # Take cashed page and send to client
-                f = open(destAddr+".webdoc",'r')
+                f = open(path+".hrml",'r')
                 cachedPage=f.read().encode(encoding='utf_8')
                 clientSocket.sendall(cachedPage)
                 f.close()
@@ -119,21 +122,22 @@ while True:
             # Prints the response
             print("RESPONSE HEADER FROM ORIGINAL SERVER")
             #Range is 10 as to not print the html data
-            for x in range(15):
+            for x in range(4):
                 print(response.split('\n')[x])
             print("END OF HEADER\n")
             # Adding to cache        
-            if os.path.exists(destAddr+".webdoc"):
-                os.remove(destAddr+".webdoc")
-            f = open(destAddr+".webdoc",'a')
+            if os.path.exists(path[1:] +".html"):
+                os.remove(path +".html")
+            print("MADE IT TO F OPEN")
+            f = open(fileName + ".html",'a')
             f.write(response)
             f.close()
-            cache.append(destAddr) # Adds the cached list
+            #cache.append(path) # Adds the cached list
             print("RESPONSE HEADER FROM PROXY TO CLIENT:")
             for x in range(10):
                 print(response.split('\n')[x])
             print("END HEADER \n")    
-            print(f'[WRITE FILE INTO CACHE]:  {destAddr}')            
+            print(f'[WRITE FILE INTO CACHE]:  {fileName}')            
             # Close connection to webserver
             # s2.close()
             # Send webpage to client
