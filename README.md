@@ -10,5 +10,6 @@ To change the port used, just add the desired port number to the running command
   
   
 To connect to the proxy server using a web browser, just use the url  
+
 ``<machine IP>:<port number>/<desired website>``
 Example:``localhost:50000/www.google.com``
