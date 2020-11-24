@@ -141,6 +141,6 @@ while True:
             # Send webpage to client
             clientSocket.close()
         except:
-            pass
+            continue
 
 s.close()
