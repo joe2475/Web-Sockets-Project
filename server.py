@@ -92,10 +92,11 @@ while True:
     # Check if destAddr is cashed ... - No.5 MS 
     addrCached = False
     for index in range(len(cache)): 
-        if (cache[index]).lower()==path.lower(): # The address is cashed!
+        if (cache[index]).lower()==fileName.lower(): # The address is cashed!
+            print(f'[LOOK UP THE CACHE]: FOUND IN THE CACHE: FILE = {path}')
             addrCached = True
             try: # Take cashed page and send to client
-                f = open(path+".hrml",'r')
+                f = open(path+".html",'r')
                 cachedPage=f.read().encode(encoding='utf_8')
                 clientSocket.sendall(cachedPage)
                 f.close()
@@ -136,7 +137,7 @@ while True:
             f = open(fileName + ".html",'a')
             f.write(response)
             f.close()
-            #cache.append(path) # Adds the cached list
+            cache.append(fileName) # Adds the cached list
             print("RESPONSE HEADER FROM PROXY TO CLIENT:")
             for x in range(10):
                 print(response.split('\n')[x])
