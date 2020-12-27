@@ -24,7 +24,6 @@ if len(sys.argv)>1:
 # This socket will be used for connection between the client and the proxy
 host = 'localhost' # Proxy runs on localhost
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Host name will be localhost and portNumber is the port number. Port will change just used it for testing purposes. 
 s.bind((host, portNumber)) #portNumber default is 50000
 #Que of 5 listens in case traffic becomes full
@@ -39,6 +38,7 @@ while True:
     #########################
     # Waits for client input, then accepts input
     print("WEB PROXY SERVER IS LISTENING")
+    s3 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientSocket, address = s.accept()
     inData = clientSocket.recv(10000)
     print("MESSAGE RECEIVED FROM CLIENT:")
@@ -140,7 +140,10 @@ while True:
             # Close connection to webserver
             # Send webpage to client
             clientSocket.close()
+            s3.close()
         except:
+            clientSocket.close()
+            s3.close()
             continue
 
 s.close()
